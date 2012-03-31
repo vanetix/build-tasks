@@ -1,6 +1,5 @@
 /*
- * Grunt Task File
- * ---------------
+ * credited to - http://github.com/particlebanana
  *
  * Task: Hogan
  * Description: Pre-Compile Hogan Mustache templates
