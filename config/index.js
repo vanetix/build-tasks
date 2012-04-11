@@ -36,13 +36,31 @@ function(data, name) {
  * building a string to be written to a file
  */
 
-task.registerHelper('config', function(settings, namespace) {
+task.registerHelper('config', function(settings) {
   var config = '';
 
-  for (var key in settings) {
-    var obj = settings[key];
-    config += 'window.Config.' + key + '=' + '"'+ obj + '";\n';
-  }
+  Object.keys(settings).forEach(function(key) {
+    if(settings[key].constructor === Object) {
+      config += 'window.Config.' + key + ' = {' +
+      Object.keys(settings[key]).reduce(function(prev, cur) {
+        if(prev !== '') prev += ', ';
+        return prev += '"' + cur + '": ' + '"' + settings[key][cur] + '"';
+      }, '') + '};\n';
+    }
+    else if(settings[key].constructor === Array) {
+      config += 'window.Config.' + key + ' = [' +
+          settings[key].reduce(function(prev, cur) {
+            if(prev !== '') prev += ', ';
+            return prev += '"' + cur + '"';
+          }, '') + '];\n';
+    }
+    else if(settings[key].constructor === Number) {
+      config += 'window.Config.' + key + ' = ' + settings[key] + ';\n';
+    }
+    else {
+      config += 'window.Config.' + key + ' = "' + settings[key] + '";\n';
+    }
+  });
 
   return config;
 });
